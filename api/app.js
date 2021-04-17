@@ -1,15 +1,45 @@
 const express = require('express');
-
 const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const io = require('socket.io')(server);
+const mongoose = require('mongoose');
+require('dotenv/config');
+const apiRoutes = require('./routes/api');
+const cors = require('cors');
 
-// routes: 
-app.get('/', (req, res) => {
-  res.send('We are on home');
-}); 
+// Socket io
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+  
+  socket.on('chat message', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('chat message', msg);
+  });
+});
+
+app.use(express.json());
+app.use('/', apiRoutes);
+app.use(cors());
+
 // -> friends
 // -> chats
 // -> /chats/{id}
 // -> login 
 // -> register
 
-app.listen(3000);
+// connect to db 
+mongoose.connect(process.env.DB_CONNECTION, 
+  { useNewUrlParser: true, useUnifiedTopology: true }, 
+  () => {
+    console.log('Connected to db');
+  }
+  );
+
+server.listen(3000, () => {
+  console.log('listening on *:3000');
+});
