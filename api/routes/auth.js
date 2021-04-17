@@ -5,17 +5,11 @@ const jwt = require('jsonwebtoken');
 require('dotenv/config');
 
 // Validation
-const Joi = require('@hapi/joi');
-
-const schema = Joi.object({
-  name: Joi.string().min(6).required(),
-  email: Joi.string().min(6).required().email(),
-  password: Joi.string().min(6).required(),
-});
+const { registerValidator } = require('../validation');
 
 router.post('/register', async(req, res) => {
   // validate the request 
-  const {error} = schema.validate(req.body);  
+  const {error} = registerValidator(req.body);  
   if(error) {
     return res.status(400).send({message: error.details[0].message});
   }
