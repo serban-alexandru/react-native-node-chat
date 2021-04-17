@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const Post = require('../models/Post');
+const authMiddleware = require('../middlewares/auth');
 
 // routes: 
 router.get('/', (req, res) => {
@@ -13,7 +14,7 @@ router.get('/home', (req,res) => {
 });
 
 // see all posts
-router.get('/posts', async (req, res) => {
+router.get('/posts', authMiddleware,  async (req, res) => {
   try {
     const posts = await Post.find();
     res.json(posts);

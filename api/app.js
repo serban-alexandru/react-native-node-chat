@@ -26,6 +26,10 @@ app.use(express.json());
 app.use('/', apiRoutes);
 app.use(cors());
 
+// auth routes 
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
+
 // -> friends
 // -> chats
 // -> /chats/{id}
